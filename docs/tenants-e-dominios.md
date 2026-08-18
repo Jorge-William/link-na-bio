@@ -51,7 +51,7 @@ A `success_url` só redireciona. Quem cria a conta é o **webhook** (`checkout.s
 
 ## Como o tenant é distribuído
 
-Um Postgres, um bucket, um worker. Isolamento = `tenant_id` em toda linha e prefixo `sites/{uuid}/`.
+Um D1, um bucket R2, um Worker `sites`. Isolamento = `tenant_id` em toda linha e prefixo `sites/{uuid}/`.
 
 O visitante nunca vê o UUID: o CDN lê o `Host`, acha o slug (ou o hostname customizado) e serve `current/`.
 
@@ -134,17 +134,19 @@ stateDiagram-v2
 - Inadimplente: dashboard trava; o site público espera **3–7 dias** e vira “assinatura pausada” **no mesmo host**. Não apague o HTML no dia da fatura (SEO e o WhatsApp do cliente).
 - Cancelou: export zip Hugo; depois 30 dias drop.
 
+Infra Cloudflare (uma zona, sem VPS no caminho crítico): **[docs/cloudflare-infra.md](cloudflare-infra.md)**.
+
 ## MVP de uma pessoa (6–10 h/semana)
 
-- 1 API (app) + 1 worker Hugo (mesmo VPS / Fly / Railway no começo)
-- Postgres gerenciado
-- R2/S3 + Cloudflare na frente de `sites`
+- Worker `app` + Worker `sites` (Host → R2) + Worker `www` (Assets)
+- D1 + KV (host→tenant) + R2 `sites/{uuid}/current`
+- Queue + Container Hugo (o request do botão não chama o binário)
 - Certificado curinga `*.sites.seudominio.com`
 - Checkout do PSP
 
 Deixar para depois:
 
-- Custom Hostname (Cloudflare for SaaS) — quando o 1º cliente pedir domínio
+- Custom Hostname (Cloudflare for SaaS) — quando o 1º pago pedir domínio
 - Segundo plano “2 sites”
 - Preview iframe Hugo em todo keystroke
 
