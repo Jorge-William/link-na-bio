@@ -142,3 +142,5 @@ Freemium no edge: teto de links e selo são regra do Worker app (gravação) e d
 Custo de HTML estático no R2 + Worker é o que deixa o free auto-pausável e sem atendimento. O Container só gira no publish.
 
 Workers Paid (US$ 5) cabe neste desenho: **[cloudflare-plano-pago.md](cloudflare-plano-pago.md)**.
+
+Terraform (plataforma fixa) + Wrangler (código): **[cloudflare-terraform.md](cloudflare-terraform.md)** · esqueleto em `infra/terraform/`.

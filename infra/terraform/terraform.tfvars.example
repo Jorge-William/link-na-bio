@@ -1,0 +1,11 @@
+cloudflare_api_token = "CF_API_TOKEN_AQUI"
+account_id           = "023e105f4ecef8ad9ca31a8372d0c353"
+zone_name            = "linknabio.com"
+environment          = "prod"
+r2_location          = "wnam"
+enable_saas_fallback = false # true no v2 (domínio do cliente)
+
+# Preencher após o 1º `wrangler deploy` (Workers & Pages → Custom domains)
+worker_www_target   = "linknabio-www-prod.<subdomain>.workers.dev"
+worker_app_target   = "linknabio-app-prod.<subdomain>.workers.dev"
+worker_sites_target = "linknabio-sites-prod.<subdomain>.workers.dev"
