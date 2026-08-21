@@ -90,6 +90,8 @@ Stripe serve. No BR, pela doc atual:
 
 O app não conhece o PSP além de `customer_id` + status da assinatura.
 
+PSP como porteiro de acesso e fluxo de signup (pago vs free): **[signup-e-psp.md](signup-e-psp.md)**.
+
 No pagamento **não** criar site publicado, subdomínio nem Custom Hostname. Isso é o onboard.
 
 O link de acesso é **login no app** (magic link no e-mail; WhatsApp opcional). MEI esquece senha; não há tempo de resetar no dia 1.
