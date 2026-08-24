@@ -196,3 +196,5 @@ flowchart TB
 - [Social](https://appsha.com/social-media-management/)
 - [Agencies](https://appsha.com/agencies-teams-organization/)
 - Transcrição do vídeo de apresentação (multi-perfil, CRM, analytics, team, QR)
+
+UI / design das telas: **[design-appsha.md](design-appsha.md)**.
