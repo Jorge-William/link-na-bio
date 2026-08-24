@@ -1,15 +1,22 @@
 # link-na-bio
 
-SaaS de páginas de **link na bio** e institucionais/portfólio: editor no dashboard, publicação Hugo estática, recorrência na bio.
+SaaS de **perfil e site profissional** (bio + institucional): editor, publicação na edge, **assinatura recorrente**. Infra fixa: **Cloudflare**. Stack do app: **flexível**.
 
-## Docs
+## Começar aqui
 
-- **[docs/cloudflare-infra.md](docs/cloudflare-infra.md)** — Cloudflare como infra: três Workers, R2, D1, Queue + Container Hugo, Custom Hostname.
-- **[docs/cloudflare-plano-pago.md](docs/cloudflare-plano-pago.md)** — Workers Paid (US$ 5): cabe?, cada nó do diagrama, o que ignorar na página de preço.
-- **[docs/cloudflare-terraform.md](docs/cloudflare-terraform.md)** — Terraform × Wrangler: o que vai no state, o que fica no CI.
-- **[docs/signup-e-psp.md](docs/signup-e-psp.md)** — PSP como porteiro, signup pago/free, quem cria a conta.
-- **[docs/concorrente-appsha.md](docs/concorrente-appsha.md)** — Appsha esmiuçado: features, o que copiar (P0–P2) e o que não entrar.
-- **[docs/design-appsha.md](docs/design-appsha.md)** — UI Appsha (cores, perfil, editor, signup): o que roubar pro nosso app.
-- **[infra/terraform/](infra/terraform/)** — módulos `platform`, `dns`, `saas` (R2, D1, KV, Queue, DNS).
-- **[docs/tenants-e-dominios.md](docs/tenants-e-dominios.md)** — origens (`www` / `app` / `sites`), checkout → magic link → publish, lookup por Host, onboard, ciclo da assinatura.
-- **[docs/freemium.md](docs/freemium.md)** — plano free, selo no rodapé (não marca d’água), o que converte para premium, limites e pausa por inatividade.
+1. **[docs/produto-e-receita.md](docs/produto-e-receita.md)** — MRR, planos, o que é fixo (CF) vs flexível
+2. **[docs/casos-de-uso.md](docs/casos-de-uso.md)** — 95 casos de uso (spec de construção)
+3. **[docs/plano-construcao.md](docs/plano-construcao.md)** — fases F0–F6 por marco de receita
+
+## Referência
+
+| Doc | Conteúdo |
+|---|---|
+| [tenants-e-dominios.md](docs/tenants-e-dominios.md) | Três origens, tenant, DNS, ciclo assinatura |
+| [signup-e-psp.md](docs/signup-e-psp.md) | PSP porteiro, signup pago/free |
+| [freemium.md](docs/freemium.md) | Free como canal de MRR |
+| [cloudflare-infra.md](docs/cloudflare-infra.md) | Workers, R2, edge (contrato de infra) |
+| [cloudflare-terraform.md](docs/cloudflare-terraform.md) | Terraform plataforma |
+| [concorrente-appsha.md](docs/concorrente-appsha.md) | Benchmark Appsha |
+| [design-appsha.md](docs/design-appsha.md) | UI de referência |
+| [infra/terraform/](infra/terraform/) | Módulos CF |

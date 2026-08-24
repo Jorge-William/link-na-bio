@@ -2,7 +2,7 @@
 
 Appsha se vende como **smart profile** para coaches, consultores, freelancers e PME: não é só “link na bio”. É perfil + captura + booking + pagamentos + CRM + reviews + social inbox. O vídeo fala “Appshure/Appure”; o produto é **Appsha**.
 
-Nosso produto é **bio + institucional/portfólio estático (Hugo)**, freemium fino, domínio próprio e export. Não competimos em CRM. Extraímos o que cabe no nosso motor — e o que **não** cabe.
+Nosso produto: **presença profissional + assinatura recorrente**. Benchmark de features e UI: **[concorrente-appsha.md](concorrente-appsha.md)**, **[design-appsha.md](design-appsha.md)**. Prioridade = o que sobe MRR ([produto-e-receita.md](produto-e-receita.md)).
 
 ```mermaid
 flowchart LR
@@ -12,13 +12,13 @@ flowchart LR
     C[CRM]
     S[Social + reviews]
   end
-  subgraph nos["link-na-bio — página publicada"]
+  subgraph nos["link-na-bio"]
     Bio[Bio / institucional]
-    Dom[Domínio + export Hugo]
-    An[Analytics clique]
+    Dom[Domínio + analytics]
+    Lead[Form/leads Business]
   end
-  appsha -.->|não copiar| nos
-  P -->|blocos úteis| Bio
+  appsha -->|inspira UI + blocos| nos
+  appsha -.->|CRM/social = fase tardia ou nunca| X[backlog]
 ```
 
 ## O que o Appsha faz (esmiuçado)
@@ -110,23 +110,13 @@ ICP: negócios **baseados em relacionamento** (agenda, inquiry, review), não cr
 | SEO / canonical | Doc de tenants |
 | Free + upgrade | Freemium com selo |
 
-## O que **não** adicionar (mata 6–10 h/semana)
+## O que **não** adicionar no v1 (F1–F3)
 
-| Feature Appsha | Por quê fora |
-|---|---|
-| CRM + deals + tasks | Vira outro produto; suporte explode |
-| Booking nativo + Google Calendar | Estado vivo; não é HTML Hugo |
-| Shop / checkout nativo | PSP do **cliente** + fulfillment; complexidade e risco |
-| Social scheduler + DM inbox + AI caption | Concorrente Meta/Buffer; fora do escopo |
-| Agregador de reviews Google/FB/IG | Integrações pesadas, OAuth, moderação |
-| Team seats / roles | Só se houver plano agência **depois** do core |
-| Serviços de fulfillment (design/SEO humano) | Agência, não SaaS |
+CRM completo, booking nativo, shop nativo, social suite, reviews sync — **atrasam MRR**. Form→e-mail no Business (F5) cobre parte do job.
 
-Esses itens pedem app dinâmico 24/7. Nosso diferencial é **página estática publicada + export Hugo + domínio**. Não virar “mini HubSpot”.
+## O que **adicionar** (prioridade receita)
 
-## O que **adicionar** ao nosso plano
-
-Ordem por alavancagem × esforço, encaixado em bio/institucional Hugo + Cloudflare.
+Ver **[casos-de-uso.md](casos-de-uso.md)** e fases em **[plano-construcao.md](plano-construcao.md)**. Resumo:
 
 ### P0 — MVP / primeiro pago (vale o ticket)
 

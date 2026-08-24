@@ -8,7 +8,7 @@ O fluxo landing → preço → pagamento → dashboard → tema → deploy **é 
 |---|---|---|
 | Marketing | `www.seudominio.com` | Landing e cards de preço. Sem sessão. |
 | App | `app.seudominio.com` | Dashboard, onboarding, cobrança. Cookie só aqui. |
-| Sites | `{slug}.sites.seudominio.com` | HTML Hugo publicado. Sem cookie de login. |
+| Sites | `{slug}.sites.seudominio.com` | Página publicada (HTML/assets no R2). Sem cookie de login. |
 
 O domínio do cliente (`bio.estudio.com`) entra **depois**, no v2: CNAME para o mesmo origin de `sites` + certificado automático (Cloudflare for SaaS). Não é um site na Hostinger por assinante.
 
@@ -35,7 +35,7 @@ flowchart LR
   PSP -->|webhook pago| Cria[user + tenant vazio]
   Cria --> Mail[magic link]
   Mail --> App[app — onboard e tema]
-  App -->|fila hugo| R2["R2: sites/{id}/current"]
+  App -->|fila publish| R2["R2: sites/{id}/current"]
   R2 --> Pub["maria.sites…"]
   Pub -.->|v2 CNAME| Custom[bio.cliente.com]
 ```
@@ -45,13 +45,13 @@ flowchart LR
 3. **Webhook** cria `user` + tenant vazio + assinatura e dispara o link de acesso.
 4. Magic link abre `app.seudominio.com` (não a página pública).
 5. Onboard simples → escolhe tema/starter → **Publicar**.
-6. O job Hugo grava `current/` e o host `{slug}.sites…` passa a responder 200.
+6. O job de publish grava `current/` e o host `{slug}.sites…` passa a responder 200.
 
 A `success_url` só redireciona. Quem cria a conta é o **webhook** (`checkout.session.completed` ou equivalente). Aba fechada e PIX atrasado não podem deixar tenant órfão.
 
 ## Como o tenant é distribuído
 
-Um D1, um bucket R2, um Worker `sites`. Isolamento = `tenant_id` em toda linha e prefixo `sites/{uuid}/`.
+Um SQL, um bucket R2, um Worker `sites`. Isolamento = `tenant_id` em toda linha e prefixo `sites/{uuid}/`.
 
 O visitante nunca vê o UUID: o CDN lê o `Host`, acha o slug (ou o hostname customizado) e serve `current/`.
 
@@ -65,7 +65,7 @@ flowchart LR
 ```
 
 - **Tema:** um repo pinado por versão, não clone por cliente.
-- **Publish:** fila. O request HTTP do botão não chama o `hugo`.
+- **Publish:** fila assíncrona; request do botão não espera o renderer.
 - **Publish atômico:** só depois do build OK o ponteiro `current` muda; se falhar, o site antigo continua.
 
 Path (`sites.seudominio.com/maria`) só serve se **nunca** houver CNAME de cliente. CNAME aponta para um **host**, não para um path.
@@ -108,7 +108,7 @@ flowchart LR
 1. **Slug** — `maria` vira `maria.sites.seudominio.com`. Bloquear reservados (`www`, `app`, `sites`, `api`) e ofensivos. Imutável no MVP (trocar slug quebra SEO e CNAME).
 2. **Starter** — `bio-oferta` | `bio-lista` | `inst-saude-local` | `port-studio`. Preenche o page-model; não desenha tema novo.
 3. **Conteúdo** — nome, uma frase, WhatsApp, 3–8 links **ou** as 4 páginas do institucional.
-4. **Publicar** — job Hugo → `current` → 200 em `https://{slug}.sites.seudominio.com`.
+4. **Publicar** — pipeline → `current/` → 200 em `https://{slug}.sites.seudominio.com`.
 
 Domínio próprio fica em **Configurações**, depois do primeiro ar. Apex (`cliente.com` no `@`) é o passo chato; no MVP aceite `bio.` ou `www`.
 
@@ -116,7 +116,7 @@ Uma conta = um site no começo. Bio e institucional são o mesmo motor (`kind` n
 
 ## Canonical e SEO
 
-`baseURL` e `canonical` no Hugo = a URL que o visitante deve indexar (domínio próprio se ativo; senão o subdomínio `sites`). **Nunca** `app.seudominio.com`.
+`canonical` e metadados SEO = URL que o visitante deve indexar (domínio próprio se ativo; senão subdomínio `sites`). **Nunca** `app.seudominio.com`.
 
 ## Ciclo de vida da assinatura
 
@@ -134,23 +134,20 @@ stateDiagram-v2
 
 - Trial sem cartão: evitar no dia 1 (conta zumbi e suporte).
 - Inadimplente: dashboard trava; o site público espera **3–7 dias** e vira “assinatura pausada” **no mesmo host**. Não apague o HTML no dia da fatura (SEO e o WhatsApp do cliente).
-- Cancelou: export zip Hugo; depois 30 dias drop.
+- Cancelou: export zip do site; depois 30 dias drop.
 
-Infra Cloudflare (uma zona, sem VPS no caminho crítico): **[docs/cloudflare-infra.md](cloudflare-infra.md)**.
+Infra Cloudflare: **[cloudflare-infra.md](cloudflare-infra.md)** · construção: **[plano-construcao.md](plano-construcao.md)** · casos de uso: **[casos-de-uso.md](casos-de-uso.md)**.
 
-## MVP de uma pessoa (6–10 h/semana)
+## Fases de entrega (resumo)
 
-- Worker `app` + Worker `sites` (Host → R2) + Worker `www` (Assets)
-- D1 + KV (host→tenant) + R2 `sites/{uuid}/current`
-- Queue + Container Hugo (o request do botão não chama o binário)
-- Certificado curinga `*.sites.seudominio.com`
-- Checkout do PSP
+| Fase | Foco receita |
+|---|---|
+| F1 | Checkout + 1ª bio paga no ar |
+| F2 | Domínio + analytics (retenção) |
+| F3 | Free canal |
+| F4 | Business institucional (ARPU) |
 
-Deixar para depois:
-
-- Custom Hostname (Cloudflare for SaaS) — quando o 1º pago pedir domínio
-- Segundo plano “2 sites”
-- Preview iframe Hugo em todo keystroke
+Detalhe em **[plano-construcao.md](plano-construcao.md)** — não lista de horas/semana.
 
 ## Checklist do que não misturar
 

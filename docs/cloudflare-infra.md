@@ -1,15 +1,17 @@
 # Cloudflare como infra
 
-Uma zona, três hosts, um bucket. Tenant = linha no D1 + prefixo no R2. O visitante cai num Worker que lê o `Host` e serve `current/`. Sem VPS, sem site Hostinger por cliente, sem Workers for Platforms (isso é para código do cliente; aqui o cliente não executa JS).
+**Contrato fixo:** Cloudflare na borda. **Contrato flexível:** SQL, linguagem do app e **pipeline de publicação** — trocáveis sem mudar o desenho abaixo.
 
-| Superfície | Host | Produto |
+Uma zona, três hosts, um bucket por tenant publicado. Tenant = registro no banco + prefixo no R2. Visitante → Worker `sites` lê `Host` → serve artefato publicado.
+
+| Superfície | Host | Papel |
 |---|---|---|
-| Marketing | `www.seudominio.com` | Worker + Static Assets. Sem cookie. |
-| App | `app.seudominio.com` | Worker (API + dashboard). Cookie só aqui. |
-| Sites | `{slug}.sites.seudominio.com` | Worker origin → R2. Sem sessão. |
-| Domínio pago | `bio.cliente.com` | Cloudflare for SaaS → o mesmo Worker de sites. |
+| Marketing | `www.seudominio.com` | Landing, pricing. Sem sessão. |
+| App | `app.seudominio.com` | Dashboard, API, cobrança. Cookie só aqui. |
+| Sites | `{slug}.sites.seudominio.com` | Página pública. Sem sessão. |
+| Domínio pago | `bio.cliente.com` | Custom Hostname → mesmo Worker `sites`. |
 
-Hugo não cabe no isolate. Roda num **Container** puxado por **Queue**. O botão Publicar não espera o binário.
+Render pesado (SSG, templates, snapshot) roda **fora do request** — Queue + Worker ou Container. Botão Publicar responde 202.
 
 ```mermaid
 flowchart TB
@@ -19,17 +21,17 @@ flowchart TB
     SITES["*.sites"]
   end
 
-  WWW --> Wwww["Worker www — Assets"]
+  WWW --> Wwww["Worker www"]
   APP --> Wapp["Worker app"]
   SITES --> Wsites["Worker sites"]
-  Custom["bio.cliente.com CNAME"] --> SaaS["Custom Hostname"]
+  Custom["bio.cliente.com"] --> SaaS["Custom Hostname"]
   SaaS --> Wsites
 
-  Wapp --> D1[(D1)]
+  Wapp --> DB[(SQL)]
   Wapp --> Q[[Queue publish]]
   Wapp --> KV[(KV host→tenant)]
-  Q --> C["Container hugo"]
-  C --> R2[("R2 sites/{id}/current")]
+  Q --> Render["Publish pipeline"]
+  Render --> R2[("R2 sites/{id}/current")]
   Wsites --> KV
   Wsites --> R2
   Wsites --> AE[Analytics Engine]
@@ -109,38 +111,27 @@ flowchart LR
 
 | Peça | Onde |
 |---|---|
-| `users`, `tenants`, `subscriptions`, `custom_domains` | D1 (`tenant_id` em toda linha) |
-| HTML publicado | R2 `sites/{uuid}/` |
-| Host → tenant | KV (TTL curto; D1 é source of truth) |
-| Magic link | Worker + Resend/Postmark (Cloudflare não envia transacional) |
-| Checkout | Stripe; webhook no Worker app |
-| Clique (pago) | Analytics Engine no Worker sites |
-| Pausa 90d / inadimplência | Cron Trigger |
-| Bot | Turnstile no magic link |
+| Contas, tenants, assinaturas, page-model | SQL (D1, Postgres+Hyperdrive, …) |
+| HTML/assets publicados | R2 `sites/{uuid}/` |
+| Host → tenant | KV cache; SQL source of truth |
+| Magic link | Worker + provedor e-mail |
+| Checkout / status | PSP → webhook → SQL |
+| Cliques (pago) | Analytics Engine |
+| Pausa inatividade / billing | Cron Trigger |
 
-Hyperdrive + Postgres só se D1 doer. Até lá, um D1.
+Pipeline de publish: interface estável (`page_model` in → `sites/{id}/current/` out). Implementação v1 pode ser SSG, templates ou outro renderer.
 
-Freemium no edge: teto de links e selo são regra do Worker app (gravação) e do Worker sites (resposta). Institucional não entra no free — o app recusa o `kind`.
+Receita e planos: **[produto-e-receita.md](produto-e-receita.md)** · casos de uso: **[casos-de-uso.md](casos-de-uso.md)**.
 
-## O que não entra
+## O que não entra na infra
 
-- Workers for Platforms / dispatch por tenant — cliente não sobe código.
-- Pages **por** assinante — um origin, N prefixos no R2.
-- Cloudflare Pages para sites (plataforma em recuo; Worker + R2 resolve Host).
-- 1 Container por cliente — um pool Hugo, fila única.
-- Cookie no host público.
-- Path-based tenant (`/maria`).
+- Workers for Platforms — cliente não executa código
+- VPS/site por assinante
+- Cookie de sessão no host público
+- Tenant por path quando existir custom domain
 
-## Corte MVP (6–10 h/semana)
+## Corte por fase (não por horas)
 
-1. Zona + três hosts + Worker sites + R2 + D1 + KV.
-2. Worker app: Stripe webhook → tenant → magic link → onboard → enqueue.
-3. Container Hugo + Queue.
-4. Selo e pausa no Worker sites.
-5. Custom Hostname quando o 1º pago pedir domínio.
+Ver **[plano-construcao.md](plano-construcao.md)**. F1 = MRR + 1ª bio; F2 = domínio + analytics; F3 = free canal.
 
-Custo de HTML estático no R2 + Worker é o que deixa o free auto-pausável e sem atendimento. O Container só gira no publish.
-
-Workers Paid (US$ 5) cabe neste desenho: **[cloudflare-plano-pago.md](cloudflare-plano-pago.md)**.
-
-Terraform (plataforma fixa) + Wrangler (código): **[cloudflare-terraform.md](cloudflare-terraform.md)** · esqueleto em `infra/terraform/`.
+Workers Paid (US$ 5): **[cloudflare-plano-pago.md](cloudflare-plano-pago.md)** · Terraform: **[cloudflare-terraform.md](cloudflare-terraform.md)**.
