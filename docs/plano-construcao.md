@@ -57,7 +57,7 @@ gantt
 | Entrega | Casos de uso |
 |---|---|
 | Custom Hostname (domínio cliente) | UC-56–UC-59 |
-| Analytics clique (Analytics Engine) | UC-61–UC-63 |
+| Analytics clique + dashboard (Pro) | UC-61–UC-64 · [analytics.md](analytics.md) |
 | QR no dashboard | UC-64 |
 | Inadimplência 3–7d + página pausada | UC-19–UC-21 |
 | Export do site (zip) | UC-45 |

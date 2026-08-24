@@ -15,6 +15,7 @@ SaaS de **perfil e site profissional** (bio + institucional): editor, publicaç�
 | [tenants-e-dominios.md](docs/tenants-e-dominios.md) | Três origens, tenant, DNS, ciclo assinatura |
 | [signup-e-psp.md](docs/signup-e-psp.md) | PSP porteiro, signup pago/free |
 | [freemium.md](docs/freemium.md) | Free como canal de MRR |
+| [analytics.md](docs/analytics.md) | Dashboard, eventos, Pro vs Business, Analytics Engine |
 | [cloudflare-infra.md](docs/cloudflare-infra.md) | Workers, R2, edge (contrato de infra) |
 | [cloudflare-terraform.md](docs/cloudflare-terraform.md) | Terraform plataforma |
 | [concorrente-appsha.md](docs/concorrente-appsha.md) | Benchmark Appsha |

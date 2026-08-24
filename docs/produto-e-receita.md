@@ -42,7 +42,7 @@ flowchart LR
 
 1. **Cartão/PIX recorrente no signup pago** — webhook cria conta; PSP é porteiro ([signup-e-psp.md](signup-e-psp.md)).
 2. **Domínio próprio no Pro** — paywall #1 (status profissional).
-3. **Analytics no Pro** — paywall #2 (dor na 2ª semana).
+3. **Analytics no Pro** — paywall #2; spec **[analytics.md](analytics.md)**.
 4. **Institucional só Business+** — ARPU sobe; free não vira hosting grátis de 4 páginas.
 5. **Form/leads no Business+** — diferencial vs Linktree; não precisa CRM pesado no v1.
 6. **Free auto-pausável** (90d) — custo marginal ~zero; não virar suporte humano.
