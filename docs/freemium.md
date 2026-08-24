@@ -30,6 +30,7 @@ Nesta ordem:
 3. **Analytics** de clique — dono de Instagram sente falta na 2ª semana.
 4. O **9º link** (free para em 5–8).
 5. **Export** zip Hugo — só no pago; é o diferencial, não o isca.
+6. **QR + WhatsApp + embeds** — ver [concorrente-appsha.md](concorrente-appsha.md) (P0).
 
 ```mermaid
 flowchart TB
