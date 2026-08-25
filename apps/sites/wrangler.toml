@@ -1,0 +1,22 @@
+name = "linknabio-sites"
+main = "src/index.ts"
+compatibility_date = "2025-03-01"
+workers_dev = true
+
+[[kv_namespaces]]
+binding = "HOST_MAP"
+id = "00000000000000000000000000000000"
+
+[[r2_buckets]]
+binding = "SITES"
+bucket_name = "linknabio-sites-prod"
+
+# Analytics Engine — descomentar quando dataset existir (F2)
+# [[analytics_engine_datasets]]
+# binding = "ANALYTICS"
+# dataset = "linknabio_events"
+
+[vars]
+SERVICE_NAME = "sites"
+SITES_ZONE = "sites.example.com"
+PLATFORM_ZONE = "example.com"

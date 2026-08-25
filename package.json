@@ -1,0 +1,22 @@
+{
+  "name": "link-na-bio",
+  "private": true,
+  "version": "0.1.0",
+  "description": "SaaS bio + institucional — Cloudflare Workers",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @linknabio/shared && npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "dev:www": "npm run dev -w @linknabio/www",
+    "dev:app": "npm run dev -w @linknabio/app",
+    "dev:sites": "npm run dev -w @linknabio/sites",
+    "dev:publish": "npm run dev -w @linknabio/publish"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

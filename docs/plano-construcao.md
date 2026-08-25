@@ -28,11 +28,13 @@ gantt
 |---|---|
 | Zona CF + DNS `www` / `app` / `*.sites` | UC-01 |
 | Terraform plataforma (R2, KV, Queue, SQL) | — |
-| Workers esqueleto + health | — |
-| Schema: `users`, `tenants`, `subscriptions`, `page_models` | UC-06+ |
-| CI: lint, test, deploy app | — |
+| Workers esqueleto + health | `apps/www`, `apps/app`, `apps/sites`, `apps/publish` |
+| Schema: `users`, `tenants`, `subscriptions`, `page_models` | `schema/d1/0001_init.sql` |
+| CI: lint, test | `.github/workflows/ci.yml` |
 
-**Não fazer:** editor bonito, free, CRM.
+**Não fazer nesta fase:** editor bonito, free viral, CRM.
+
+Código e como rodar: **[desenvolvimento.md](desenvolvimento.md)**.
 
 ## F1 — Primeiro real (semana 3–5)
 

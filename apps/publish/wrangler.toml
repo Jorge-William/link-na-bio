@@ -1,0 +1,26 @@
+name = "linknabio-publish"
+main = "src/index.ts"
+compatibility_date = "2025-03-01"
+workers_dev = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "linknabio-prod"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "../../schema/d1"
+
+[[r2_buckets]]
+binding = "SITES"
+bucket_name = "linknabio-sites-prod"
+
+[[kv_namespaces]]
+binding = "HOST_MAP"
+id = "00000000000000000000000000000000"
+
+[[queues.consumers]]
+queue = "linknabio-publish-prod"
+max_batch_size = 5
+max_retries = 3
+
+[vars]
+SERVICE_NAME = "publish"

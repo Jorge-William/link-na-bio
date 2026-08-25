@@ -1,0 +1,29 @@
+name = "linknabio-app"
+main = "src/index.ts"
+compatibility_date = "2025-03-01"
+workers_dev = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "linknabio-prod"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "../../schema/d1"
+
+[[kv_namespaces]]
+binding = "HOST_MAP"
+id = "00000000000000000000000000000000"
+
+[[r2_buckets]]
+binding = "SITES"
+bucket_name = "linknabio-sites-prod"
+
+[[queues.producers]]
+binding = "PUBLISH"
+queue = "linknabio-publish-prod"
+
+[vars]
+SERVICE_NAME = "app"
+SITES_ZONE = "sites.example.com"
+PLATFORM_ZONE = "example.com"
+# Preencher via `wrangler secret put` em prod:
+# SESSION_SECRET, PSP_WEBHOOK_SECRET, RESEND_API_KEY

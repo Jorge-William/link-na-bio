@@ -1,0 +1,13 @@
+name = "linknabio-www"
+main = "src/index.ts"
+compatibility_date = "2025-03-01"
+workers_dev = true
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+html_handling = "auto-trailing-slash"
+not_found_handling = "single-page-application"
+
+[vars]
+SERVICE_NAME = "www"
