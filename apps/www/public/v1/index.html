@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pixelink — Seu link na bio com estilo pixel art</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Syne:wght@400;500;600;700;800&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwindcss.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            pixel: ['"Press Start 2P"', 'monospace'],
+            heading: ['Syne', 'sans-serif'],
+            body: ['Manrope', 'sans-serif'],
+          },
+          colors: {
+            lime: { 400: '#A3E635', 500: '#84CC16' },
+            volt: '#CFFF04',
+            coral: '#FF6B6B',
+            sky: '#38BDF8',
+            grape: '#A855F7',
+            peach: '#FBBF24',
+            ink: '#0F0F1A',
+            paper: '#FFFDF7',
+          },
+          keyframes: {
+            'float': { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-12px)' } },
+            'marquee': { '0%': { transform: 'translateX(0)' }, '100%': { transform: 'translateX(-50%)' } },
+            'phone-swap': {
+              '0%,18%': { opacity: '1' },
+              '20%,38%': { opacity: '0' },
+              '40%,58%': { opacity: '0' },
+              '60%,78%': { opacity: '0' },
+              '80%,98%': { opacity: '0' },
+              '100%': { opacity: '0' },
+            },
+          },
+          animation: {
+            'float': 'float 4s ease-in-out infinite',
+            'marquee': 'marquee 30s linear infinite',
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Manrope', sans-serif; background: #FFFDF7; color: #0F0F1A; }
+
+    .pixel-border {
+      box-shadow:
+        4px 0 0 0 currentColor,
+        -4px 0 0 0 currentColor,
+        0 4px 0 0 currentColor,
+        0 -4px 0 0 currentColor;
+    }
+
+    .pixel-border-lg {
+      box-shadow:
+        6px 0 0 0 currentColor,
+        -6px 0 0 0 currentColor,
+        0 6px 0 0 currentColor,
+        0 -6px 0 0 currentColor;
+    }
+
+    .doodle-underline {
+      background-image: url("data:image/svg+xml,%3Csvg width='200' height='12' viewBox='0 0 200 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 8C30 2 50 10 80 4C110 -2 130 10 160 6C190 2 198 8 198 8' stroke='%23FF6B6B' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: repeat-x;
+      background-position: bottom;
+      background-size: 100px 8px;
+      padding-bottom: 8px;
+    }
+
+    .doodle-circle {
+      background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='40' cy='40' r='36' stroke='%23CFFF04' stroke-width='3' stroke-dasharray='6 4'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+    }
+
+    .pixel-grid {
+      background-image:
+        linear-gradient(rgba(15,15,26,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15,15,26,0.03) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    .phone-frame {
+      width: 280px;
+      height: 560px;
+      border-radius: 36px;
+      border: 4px solid #0F0F1A;
+      box-shadow: 8px 8px 0 0 #0F0F1A;
+      overflow: hidden;
+      position: relative;
+      background: #0F0F1A;
+    }
+
+    .phone-notch {
+      width: 120px;
+      height: 28px;
+      background: #0F0F1A;
+      border-radius: 0 0 16px 16px;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+    }
+
+    .phone-screen {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .phone-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .tribe-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.8s ease-in-out;
+    }
+    .tribe-slide.active {
+      opacity: 1;
+    }
+
+    .doodle-arrow {
+      display: inline-block;
+    }
+    .doodle-arrow svg {
+      width: 48px;
+      height: 48px;
+    }
+
+    .sticker {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      border: 2px solid #0F0F1A;
+      box-shadow: 3px 3px 0 0 #0F0F1A;
+      transform: rotate(var(--r, -2deg));
+    }
+
+    .marquee-track {
+      display: flex;
+      width: max-content;
+    }
+
+    .faq-item[open] summary::after { content: '−'; }
+    .faq-item summary::after { content: '+'; font-family: 'Press Start 2P', monospace; font-size: 1rem; }
+    .faq-item summary { list-style: none; }
+    .faq-item summary::-webkit-details-marker { display: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: #CFFF04;
+      color: #0F0F1A;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.05rem;
+      border: 3px solid #0F0F1A;
+      box-shadow: 5px 5px 0 0 #0F0F1A;
+      cursor: pointer;
+      transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+    }
+    .btn-primary:hover {
+      transform: translate(2px, 2px);
+      box-shadow: 3px 3px 0 0 #0F0F1A;
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: transparent;
+      color: #0F0F1A;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      border: 3px solid #0F0F1A;
+      box-shadow: 5px 5px 0 0 #0F0F1A;
+      cursor: pointer;
+      transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+    }
+    .btn-outline:hover {
+      transform: translate(2px, 2px);
+      box-shadow: 3px 3px 0 0 #0F0F1A;
+    }
+
+    .card-pixel {
+      background: #fff;
+      border: 3px solid #0F0F1A;
+      box-shadow: 6px 6px 0 0 #0F0F1A;
+      transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+      cursor: pointer;
+    }
+    .card-pixel:hover {
+      transform: translate(3px, 3px);
+      box-shadow: 3px 3px 0 0 #0F0F1A;
+    }
+
+    .scribble-star {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 2L19 12L30 12L21 19L24 30L16 23L8 30L11 19L2 12L13 12Z' fill='%23CFFF04' stroke='%230F0F1A' stroke-width='1.5'/%3E%3C/svg%3E");
+      background-size: contain;
+      pointer-events: none;
+    }
+
+    .scribble-zigzag {
+      position: absolute;
+      width: 80px;
+      height: 20px;
+      background-image: url("data:image/svg+xml,%3Csvg width='80' height='20' viewBox='0 0 80 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 18L12 2L22 18L32 2L42 18L52 2L62 18L72 2L78 14' stroke='%23FF6B6B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="pixel-grid overflow-x-hidden">
+
+  <!-- ============ NAVBAR ============ -->
+  <nav class="fixed top-4 left-4 right-4 z-50 bg-paper/90 backdrop-blur-sm border-3 border-ink rounded-none" style="border: 3px solid #0F0F1A; box-shadow: 4px 4px 0 0 #0F0F1A;">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-5 py-3">
+      <a href="#" class="flex items-center gap-2">
+        <span class="font-pixel text-sm text-ink">&#9608;&#9608;</span>
+        <span class="font-heading font-800 text-xl tracking-tight">Pixelink</span>
+      </a>
+      <div class="hidden md:flex items-center gap-8 font-body font-600 text-sm">
+        <a href="#features" class="hover:text-grape transition-colors duration-200">Features</a>
+        <a href="#tribes" class="hover:text-grape transition-colors duration-200">Tribos</a>
+        <a href="#pricing" class="hover:text-grape transition-colors duration-200">Preços</a>
+        <a href="#faq" class="hover:text-grape transition-colors duration-200">FAQ</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="#" class="hidden sm:inline-flex font-heading font-700 text-sm hover:text-grape transition-colors duration-200">Login</a>
+        <a href="#" class="btn-primary text-sm !py-2.5 !px-5 !text-sm">Comece grátis</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============ HERO ============ -->
+  <section class="relative min-h-screen flex items-center pt-28 pb-20 overflow-hidden">
+    <div class="scribble-star" style="top:120px;left:8%;transform:rotate(15deg);"></div>
+    <div class="scribble-star" style="top:200px;right:12%;transform:rotate(-10deg);width:24px;height:24px;"></div>
+    <div class="scribble-zigzag" style="top:160px;right:20%;transform:rotate(5deg);"></div>
+    <div class="scribble-star" style="bottom:15%;left:15%;transform:rotate(25deg);width:20px;height:20px;"></div>
+    <div class="scribble-zigzag" style="bottom:25%;left:5%;transform:rotate(-8deg);"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+        <div class="max-w-xl">
+          <div class="flex flex-wrap gap-2 mb-6">
+            <span class="sticker bg-volt" style="--r:-3deg;">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="5" width="4" height="4" fill="#0F0F1A"/><rect x="5" y="1" width="4" height="4" fill="#0F0F1A"/><rect x="5" y="9" width="4" height="4" fill="#0F0F1A"/><rect x="9" y="5" width="4" height="4" fill="#0F0F1A"/></svg>
+              Pixel Perfect
+            </span>
+            <span class="sticker bg-sky/30" style="--r:2deg;">+50 templates</span>
+            <span class="sticker bg-coral/30" style="--r:-1deg;">100% Grátis</span>
+          </div>
+
+          <h1 class="font-heading font-800 text-4xl sm:text-5xl lg:text-6xl leading-[1.08] tracking-tight mb-6">
+            Seu universo inteiro<br/>
+            <span class="relative inline-block">
+              <span class="doodle-underline">em um pixel</span>
+            </span>
+            <span class="font-pixel text-2xl sm:text-3xl text-grape align-middle ml-2">.</span>
+          </h1>
+
+          <p class="font-body text-lg text-ink/70 leading-relaxed mb-8 max-w-md">
+            O link na bio com cara de pixel art que faz todo mundo parar pra olhar. Reúna seus links, loja, redes e música em uma página única com estilo retro-moderno.
+          </p>
+
+          <div class="flex flex-wrap gap-4 mb-8">
+            <a href="#" class="btn-primary">
+              Criar meu Pixelink
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M6 4L14 10L6 16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a href="#tribes" class="btn-outline">Ver demo</a>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <div class="flex -space-x-3">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop&crop=face" alt="Usuária" class="w-9 h-9 rounded-full border-2 border-paper object-cover" />
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face" alt="Usuário" class="w-9 h-9 rounded-full border-2 border-paper object-cover" />
+              <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face" alt="Usuária" class="w-9 h-9 rounded-full border-2 border-paper object-cover" />
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face" alt="Usuário" class="w-9 h-9 rounded-full border-2 border-paper object-cover" />
+            </div>
+            <p class="font-body text-sm text-ink/60"><span class="font-700 text-ink">12.847</span> criadores já pixelaram</p>
+          </div>
+        </div>
+
+        <!-- PHONE MOCKUP -->
+        <div class="flex justify-center lg:justify-end relative">
+          <div class="scribble-star" style="top:-20px;right:30px;transform:rotate(20deg);"></div>
+          <div class="scribble-zigzag" style="bottom:40px;left:0;transform:rotate(-4deg);"></div>
+
+          <div class="animate-float">
+            <div class="phone-frame">
+              <div class="phone-notch"></div>
+              <div class="phone-screen" id="phoneCarousel">
+                <!-- Rockeiro -->
+                <div class="tribe-slide active" style="background:linear-gradient(135deg,#1a1a2e,#16213e);">
+                  <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=560&h=1120&fit=crop" alt="Rockeiro com guitarra em show" />
+                  <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;background:linear-gradient(transparent,rgba(0,0,0,0.85));">
+                    <p class="font-pixel text-[10px] text-volt leading-relaxed">@johnny_riffs</p>
+                    <p class="font-body text-xs text-white/70 mt-1">Guitarrista &bull; Produtor &bull; Rockeiro</p>
+                    <div class="flex gap-2 mt-3">
+                      <span class="px-2 py-1 text-[10px] font-700 bg-coral/80 text-white rounded-sm">Spotify</span>
+                      <span class="px-2 py-1 text-[10px] font-700 bg-grape/80 text-white rounded-sm">YouTube</span>
+                      <span class="px-2 py-1 text-[10px] font-700 bg-sky/80 text-white rounded-sm">Loja</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Artista -->
+                <div class="tribe-slide" style="background:linear-gradient(135deg,#fdf2f8,#fce7f3);">
+                  <img src="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=560&h=1120&fit=crop" alt="Artista pintando com tintas coloridas" />
+                  <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;background:linear-gradient(transparent,rgba(0,0,0,0.85));">
+                    <p class="font-pixel text-[10px] text-peach leading-relaxed">@arte_da_luma</p>
+                    <p class="font-body text-xs text-white/70 mt-1">Ilustradora &bull; Muralista &bull; Artista</p>
+                    <div class="flex gap-2 mt-3">
+                      <span class="px-2 py-1 text-[10px] font-700 bg-coral/80 text-white rounded-sm">Portfólio</span>
+                      <span class="px-2 py-1 text-[10px] font-700 bg-grape/80 text-white rounded-sm">Behance</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Executivo -->
+                <div class="tribe-slide" style="background:linear-gradient(135deg,#f0f9ff,#e0f2fe);">
+                  <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=560&h=1120&fit=crop" alt="Executivo profissional de terno" />
+                  <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;background:linear-gradient(transparent,rgba(0,0,0,0.85));">
+                    <p class="font-pixel text-[10px] text-sky leading-relaxed">@marcelo.ceo</p>
+                    <p class="font-body text-xs text-white/70 mt-1">CEO &bull; Investidor &bull; Mentor</p>
+                    <div class="flex gap-2 mt-3">
+                      <span class="px-2 py-1 text-[10px] font-700 bg-sky/80 text-white rounded-sm">LinkedIn</span>
+                      <span class="px-2 py-1 text-[10px] font-700 bg-ink/60 text-white rounded-sm">Calendly</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Budista / Yoga -->
+                <div class="tribe-slide" style="background:linear-gradient(135deg,#fefce8,#fef9c3);">
+                  <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=560&h=1120&fit=crop" alt="Pessoa meditando ao ar livre" />
+                  <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;background:linear-gradient(transparent,rgba(0,0,0,0.85));">
+                    <p class="font-pixel text-[10px] text-lime-400 leading-relaxed">@paz_interior</p>
+                    <p class="font-body text-xs text-white/70 mt-1">Yoga &bull; Meditação &bull; Bem-estar</p>
+                    <div class="flex gap-2 mt-3">
+                      <span class="px-2 py-1 text-[10px] font-700 bg-lime-400/80 text-ink rounded-sm">Aulas</span>
+                      <span class="px-2 py-1 text-[10px] font-700 bg-peach/80 text-ink rounded-sm">Retiros</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Pagodeiro -->
+                <div class="tribe-slide" style="background:linear-gradient(135deg,#fef3c7,#fde68a);">
+                  <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=560&h=1120&fit=crop" alt="Músico tocando pagode com violão" />
+                  <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;background:linear-gradient(transparent,rgba(0,0,0,0.85));">
+                    <p class="font-pixel text-[10px] text-coral leading-relaxed">@samba_do_rei</p>
+                    <p class="font-body text-xs text-white/70 mt-1">Pagodeiro &bull; Cantor &bull; Compositor</p>
+                    <div class="flex gap-2 mt-3">
+                      <span class="px-2 py-1 text-[10px] font-700 bg-coral/80 text-white rounded-sm">Spotify</span>
+                      <span class="px-2 py-1 text-[10px] font-700 bg-peach/80 text-ink rounded-sm">Shows</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MARQUEE BANNER ============ -->
+  <div class="bg-ink text-paper py-3 overflow-hidden border-y-4 border-volt">
+    <div class="marquee-track animate-marquee">
+      <span class="flex items-center gap-8 text-sm font-heading font-700 tracking-wide whitespace-nowrap px-4">
+        <span>LINK NA BIO</span><span class="text-volt">&#9679;</span>
+        <span>PIXEL ART</span><span class="text-coral">&#9679;</span>
+        <span>+50 TEMPLATES</span><span class="text-sky">&#9679;</span>
+        <span>ANALYTICS</span><span class="text-grape">&#9679;</span>
+        <span>LOJA INTEGRADA</span><span class="text-peach">&#9679;</span>
+        <span>DOMÍNIO PRÓPRIO</span><span class="text-volt">&#9679;</span>
+        <span>QR CODE</span><span class="text-coral">&#9679;</span>
+        <span>SEO FRIENDLY</span><span class="text-sky">&#9679;</span>
+        <span>LINK NA BIO</span><span class="text-volt">&#9679;</span>
+        <span>PIXEL ART</span><span class="text-coral">&#9679;</span>
+        <span>+50 TEMPLATES</span><span class="text-sky">&#9679;</span>
+        <span>ANALYTICS</span><span class="text-grape">&#9679;</span>
+        <span>LOJA INTEGRADA</span><span class="text-peach">&#9679;</span>
+        <span>DOMÍNIO PRÓPRIO</span><span class="text-volt">&#9679;</span>
+        <span>QR CODE</span><span class="text-coral">&#9679;</span>
+        <span>SEO FRIENDLY</span><span class="text-sky">&#9679;</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- ============ FEATURES ============ -->
+  <section id="features" class="py-24 px-4 sm:px-6 lg:px-8 relative">
+    <div class="scribble-zigzag" style="top:40px;right:10%;transform:rotate(3deg);"></div>
+    <div class="scribble-star" style="top:80px;left:8%;transform:rotate(-15deg);width:24px;height:24px;"></div>
+
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <span class="font-pixel text-xs text-grape tracking-wider">// FEATURES</span>
+        <h2 class="font-heading font-800 text-3xl sm:text-4xl lg:text-5xl mt-4 tracking-tight">
+          Tudo que você precisa.<br/><span class="doodle-underline">Nada que você não precisa.</span>
+        </h2>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Feature 1 -->
+        <div class="card-pixel p-6 relative overflow-hidden">
+          <div class="w-12 h-12 bg-volt flex items-center justify-center mb-4 border-2 border-ink">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" stroke="#0F0F1A" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="#0F0F1A" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="#0F0F1A" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="#0F0F1A" stroke-width="2"/></svg>
+          </div>
+          <h3 class="font-heading font-700 text-lg mb-2">Templates Pixel Art</h3>
+          <p class="font-body text-sm text-ink/60 leading-relaxed">+50 templates desenhados à mão em pixel art. Cada tribo tem seu estilo. Rock, zen, corporate, artsy.</p>
+        </div>
+        <!-- Feature 2 -->
+        <div class="card-pixel p-6">
+          <div class="w-12 h-12 bg-coral/20 flex items-center justify-center mb-4 border-2 border-ink">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L15 8.5L22 9.5L17 14.5L18 21.5L12 18.5L6 21.5L7 14.5L2 9.5L9 8.5L12 2Z" stroke="#0F0F1A" stroke-width="2" stroke-linejoin="round"/></svg>
+          </div>
+          <h3 class="font-heading font-700 text-lg mb-2">Analytics em Tempo Real</h3>
+          <p class="font-body text-sm text-ink/60 leading-relaxed">Veja quem clicou, de onde veio, e qual link bombou. Dashboard com gráficos estilo arcade.</p>
+        </div>
+        <!-- Feature 3 -->
+        <div class="card-pixel p-6">
+          <div class="w-12 h-12 bg-sky/20 flex items-center justify-center mb-4 border-2 border-ink">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#0F0F1A" stroke-width="2"/><path d="M12 7V12L15 15" stroke="#0F0F1A" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <h3 class="font-heading font-700 text-lg mb-2">Pronto em 2 Minutos</h3>
+          <p class="font-body text-sm text-ink/60 leading-relaxed">Escolha o template, cole seus links, publique. Sem código, sem enrolação, sem tutorial de 40 minutos.</p>
+        </div>
+        <!-- Feature 4 -->
+        <div class="card-pixel p-6">
+          <div class="w-12 h-12 bg-grape/20 flex items-center justify-center mb-4 border-2 border-ink">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 12L12 3L21 12" stroke="#0F0F1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10V20H19V10" stroke="#0F0F1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3 class="font-heading font-700 text-lg mb-2">Domínio Personalizado</h3>
+          <p class="font-body text-sm text-ink/60 leading-relaxed">Use seu próprio domínio ou o nosso pixelink.bio/seuusuario. Branding do jeito que você quiser.</p>
+        </div>
+        <!-- Feature 5 -->
+        <div class="card-pixel p-6">
+          <div class="w-12 h-12 bg-peach/20 flex items-center justify-center mb-4 border-2 border-ink">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2" stroke="#0F0F1A" stroke-width="2"/><path d="M4 9H20" stroke="#0F0F1A" stroke-width="2"/><path d="M9 9V20" stroke="#0F0F1A" stroke-width="2"/></svg>
+          </div>
+          <h3 class="font-heading font-700 text-lg mb-2">Loja Integrada</h3>
+          <p class="font-body text-sm text-ink/60 leading-relaxed">Venda produtos digitais, receba tips, e integre com Stripe, Pix e PayPal direto da bio.</p>
+        </div>
+        <!-- Feature 6 -->
+        <div class="card-pixel p-6">
+          <div class="w-12 h-12 bg-lime-400/20 flex items-center justify-center mb-4 border-2 border-ink">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 4H10V10H4V4Z" stroke="#0F0F1A" stroke-width="2"/><path d="M14 4H20V10H14V4Z" stroke="#0F0F1A" stroke-width="2"/><path d="M4 14H10V20H4V14Z" stroke="#0F0F1A" stroke-width="2"/><path d="M14 14H16V16" stroke="#0F0F1A" stroke-width="2" stroke-linecap="round"/><path d="M20 14V16H18" stroke="#0F0F1A" stroke-width="2" stroke-linecap="round"/><path d="M14 20H16" stroke="#0F0F1A" stroke-width="2" stroke-linecap="round"/><path d="M20 18V20" stroke="#0F0F1A" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <h3 class="font-heading font-700 text-lg mb-2">QR Code Pixel</h3>
+          <p class="font-body text-sm text-ink/60 leading-relaxed">Gere QR Codes estilizados em pixel art. Perfeito pra cartão de visita, flyer, e adesivo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TRIBES SECTION ============ -->
+  <section id="tribes" class="py-24 bg-ink text-paper relative overflow-hidden">
+    <div class="scribble-star" style="top:60px;left:5%;transform:rotate(10deg);filter:hue-rotate(90deg);"></div>
+    <div class="scribble-star" style="bottom:80px;right:8%;transform:rotate(-20deg);width:24px;height:24px;"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <span class="font-pixel text-xs text-volt tracking-wider">// TRIBOS</span>
+        <h2 class="font-heading font-800 text-3xl sm:text-4xl lg:text-5xl mt-4 tracking-tight">
+          Cada tribo, <span class="text-volt">um pixel diferente</span>
+        </h2>
+        <p class="font-body text-paper/60 mt-4 max-w-lg mx-auto">
+          De rockeiros a budistas, de executivos a pagodeiros. Pixelink se adapta ao seu estilo.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <!-- Tribe cards -->
+        <div class="group relative overflow-hidden border-2 border-paper/20 hover:border-volt transition-colors duration-200 cursor-pointer" style="aspect-ratio:3/4;">
+          <img src="https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=400&h=540&fit=crop" alt="Rockeiro com jaqueta de couro" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/20 to-transparent"></div>
+          <div class="absolute bottom-3 left-3 right-3">
+            <span class="font-pixel text-[10px] text-coral">ROCK</span>
+            <p class="font-body text-xs text-paper/70 mt-1">Guitarras, tattoos, atitude</p>
+          </div>
+        </div>
+
+        <div class="group relative overflow-hidden border-2 border-paper/20 hover:border-volt transition-colors duration-200 cursor-pointer" style="aspect-ratio:3/4;">
+          <img src="https://images.unsplash.com/photo-1545389336-cf090694435e?w=400&h=540&fit=crop" alt="Pessoa meditando em posição de lótus" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/20 to-transparent"></div>
+          <div class="absolute bottom-3 left-3 right-3">
+            <span class="font-pixel text-[10px] text-lime-400">ZEN</span>
+            <p class="font-body text-xs text-paper/70 mt-1">Yoga, meditação, paz</p>
+          </div>
+        </div>
+
+        <div class="group relative overflow-hidden border-2 border-paper/20 hover:border-volt transition-colors duration-200 cursor-pointer" style="aspect-ratio:3/4;">
+          <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&h=540&fit=crop" alt="Artista com tintas e pincéis" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/20 to-transparent"></div>
+          <div class="absolute bottom-3 left-3 right-3">
+            <span class="font-pixel text-[10px] text-peach">ARTE</span>
+            <p class="font-body text-xs text-paper/70 mt-1">Tintas, cores, expressão</p>
+          </div>
+        </div>
+
+        <div class="group relative overflow-hidden border-2 border-paper/20 hover:border-volt transition-colors duration-200 cursor-pointer" style="aspect-ratio:3/4;">
+          <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400&h=540&fit=crop" alt="Executivo profissional confiante" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/20 to-transparent"></div>
+          <div class="absolute bottom-3 left-3 right-3">
+            <span class="font-pixel text-[10px] text-sky">CORPORATE</span>
+            <p class="font-body text-xs text-paper/70 mt-1">Negócios, networking, deals</p>
+          </div>
+        </div>
+
+        <div class="group relative overflow-hidden border-2 border-paper/20 hover:border-volt transition-colors duration-200 cursor-pointer col-span-2 md:col-span-1" style="aspect-ratio:3/4;">
+          <img src="https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=400&h=540&fit=crop" alt="Músico de samba e pagode" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/20 to-transparent"></div>
+          <div class="absolute bottom-3 left-3 right-3">
+            <span class="font-pixel text-[10px] text-coral">PAGODE</span>
+            <p class="font-body text-xs text-paper/70 mt-1">Samba, alegria, comunidade</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="py-24 px-4 sm:px-6 lg:px-8 relative">
+    <div class="scribble-zigzag" style="top:30px;left:12%;transform:rotate(-5deg);"></div>
+
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-16">
+        <span class="font-pixel text-xs text-coral tracking-wider">// COMO FUNCIONA</span>
+        <h2 class="font-heading font-800 text-3xl sm:text-4xl lg:text-5xl mt-4 tracking-tight">
+          3 passos. <span class="doodle-underline">Zero código.</span>
+        </h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-volt border-3 border-ink mx-auto mb-4 flex items-center justify-center" style="border:3px solid #0F0F1A;box-shadow:4px 4px 0 0 #0F0F1A;">
+            <span class="font-pixel text-lg">1</span>
+          </div>
+          <h3 class="font-heading font-700 text-lg mb-2">Escolha seu template</h3>
+          <p class="font-body text-sm text-ink/60">Navegue pelos +50 templates pixel art. Filtre por tribo, cor ou mood.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-coral/20 border-3 border-ink mx-auto mb-4 flex items-center justify-center" style="border:3px solid #0F0F1A;box-shadow:4px 4px 0 0 #0F0F1A;">
+            <span class="font-pixel text-lg">2</span>
+          </div>
+          <h3 class="font-heading font-700 text-lg mb-2">Adicione seus links</h3>
+          <p class="font-body text-sm text-ink/60">Cole os links das suas redes, loja, portfólio. Arraste pra reordenar.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-grape/20 border-3 border-ink mx-auto mb-4 flex items-center justify-center" style="border:3px solid #0F0F1A;box-shadow:4px 4px 0 0 #0F0F1A;">
+            <span class="font-pixel text-lg">3</span>
+          </div>
+          <h3 class="font-heading font-700 text-lg mb-2">Publique e compartilhe</h3>
+          <p class="font-body text-sm text-ink/60">Sua página fica online em segundos. Copie o link e cole na bio.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SOCIAL PROOF ============ -->
+  <section class="py-20 bg-grape/5 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div class="scribble-star" style="top:20px;right:15%;transform:rotate(12deg);"></div>
+
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <span class="font-pixel text-xs text-grape tracking-wider">// DEPOIMENTOS</span>
+        <h2 class="font-heading font-800 text-3xl sm:text-4xl mt-4 tracking-tight">
+          Quem usa, <span class="doodle-underline">não volta</span>
+        </h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="card-pixel p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&h=80&fit=crop&crop=face" alt="Mari" class="w-10 h-10 rounded-full object-cover border-2 border-ink" />
+            <div>
+              <p class="font-heading font-700 text-sm">Mari Luísa</p>
+              <p class="font-body text-xs text-ink/50">@mari.tattoo</p>
+            </div>
+          </div>
+          <p class="font-body text-sm text-ink/70 leading-relaxed">"Meus clientes sempre elogiam minha bio. O estilo pixel art combina demais com tattoo. Já vendi 3x mais com o link da loja direto ali."</p>
+          <div class="flex gap-1 mt-3">
+            <span class="text-peach">&#9733;</span><span class="text-peach">&#9733;</span><span class="text-peach">&#9733;</span><span class="text-peach">&#9733;</span><span class="text-peach">&#9733;</span>
+          </div>
+        </div>
+
+        <div class="card-pixel p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face" alt="Carlos" class="w-10 h-10 rounded-full object-cover border-2 border-ink" />
+            <div>
+              <p class="font-heading font-700 text-sm">Carlos Henrique</p>
+              <p class="font-body text-xs text-ink/50">@carloshenrique.dev</p>
+            </div>
+          </div>
+          <p class="font-body text-sm text-ink/70 leading-relaxed">"Como dev, eu odiava as opções genéricas. Pixelink me deu uma bio que parece que eu mesmo codei. O analytics é bizarramente bom."</p>
+          <div class="flex gap-1 mt-3">
+            <span class="text-peach">&#9733;</span><span class="text-peach">&#9733;</span><span class="text-peach">&#9733;</span><span class="text-peach">&#9733;</span><span class="text-peach">&#9733;</span>
+          </div>
+        </div>
+
+        <div class="card-pixel p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face" alt="Bruna" class="w-10 h-10 rounded-full object-cover border-2 border-ink" />
+            <div>
+              <p class="font-heading font-700 text-sm">Bruna Oliveira</p>
+              <p class="font-body text-xs text-ink/50">@bruna.yoga</p>
+            </div>
+          </div>
+          <p class="font-body text-sm text-ink/70 leading-relaxed">"Achei que pixel art e yoga não combinavam, mas o template zen ficou PERFEITO. Minhas alunas amaram. Simples de montar."</p>
+          <div class="flex gap-1 mt-3">
+            <span class="text-peach">&#9733;</span><span class="text-peach">&#9733;</span><span class="text-peach">&#9733;</span><span class="text-peach">&#9733;</span><span class="text-ink/20">&#9733;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section id="pricing" class="py-24 px-4 sm:px-6 lg:px-8 relative">
+    <div class="scribble-star" style="top:40px;left:20%;transform:rotate(-8deg);width:20px;height:20px;"></div>
+    <div class="scribble-zigzag" style="bottom:60px;right:10%;transform:rotate(6deg);"></div>
+
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <span class="font-pixel text-xs text-sky tracking-wider">// PREÇOS</span>
+        <h2 class="font-heading font-800 text-3xl sm:text-4xl lg:text-5xl mt-4 tracking-tight">
+          Simples como <span class="doodle-underline">um pixel</span>
+        </h2>
+        <p class="font-body text-ink/60 mt-4">Sem surpresas. Sem taxas escondidas. Cancele quando quiser.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6 items-start">
+        <!-- Free -->
+        <div class="card-pixel p-8">
+          <span class="font-pixel text-xs text-ink/40">FREE</span>
+          <div class="mt-4 mb-6">
+            <span class="font-heading font-800 text-4xl">R$0</span>
+            <span class="font-body text-sm text-ink/50">/mês</span>
+          </div>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start gap-2 font-body text-sm text-ink/70">
+              <svg class="w-5 h-5 text-lime-500 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Links ilimitados
+            </li>
+            <li class="flex items-start gap-2 font-body text-sm text-ink/70">
+              <svg class="w-5 h-5 text-lime-500 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              10 templates pixel art
+            </li>
+            <li class="flex items-start gap-2 font-body text-sm text-ink/70">
+              <svg class="w-5 h-5 text-lime-500 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Analytics básico
+            </li>
+            <li class="flex items-start gap-2 font-body text-sm text-ink/70">
+              <svg class="w-5 h-5 text-lime-500 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              pixelink.bio/usuario
+            </li>
+          </ul>
+          <a href="#" class="btn-outline w-full justify-center">Começar grátis</a>
+        </div>
+
+        <!-- Pro (popular) -->
+        <div class="card-pixel p-8 relative border-volt" style="border-color:#CFFF04;">
+          <span class="absolute -top-4 left-1/2 -translate-x-1/2 font-pixel text-[10px] bg-volt text-ink px-4 py-1.5 border-2 border-ink" style="box-shadow:3px 3px 0 0 #0F0F1A;">POPULAR</span>
+          <span class="font-pixel text-xs text-grape">PRO</span>
+          <div class="mt-4 mb-6">
+            <span class="font-heading font-800 text-4xl">R$19</span>
+            <span class="font-body text-sm text-ink/50">/mês</span>
+          </div>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start gap-2 font-body text-sm text-ink/70">
+              <svg class="w-5 h-5 text-lime-500 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Tudo do Free
+            </li>
+            <li class="flex items-start gap-2 font-body text-sm text-ink/70">
+              <svg class="w-5 h-5 text-lime-500 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              +50 templates exclusivos
+            </li>
+            <li class="flex items-start gap-2 font-body text-sm text-ink/70">
+              <svg class="w-5 h-5 text-lime-500 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Domínio personalizado
+            </li>
+            <li class="flex items-start gap-2 font-body text-sm text-ink/70">
+              <svg class="w-5 h-5 text-lime-500 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Analytics avançado
+            </li>
+            <li class="flex items-start gap-2 font-body text-sm text-ink/70">
+              <svg class="w-5 h-5 text-lime-500 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Loja integrada (0% taxa)
+            </li>
+            <li class="flex items-start gap-2 font-body text-sm text-ink/70">
+              <svg class="w-5 h-5 text-lime-500 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              QR Code pixel art
+            </li>
+          </ul>
+          <a href="#" class="btn-primary w-full justify-center">Escolher Pro</a>
+        </div>
+
+        <!-- Business -->
+        <div class="card-pixel p-8">
+          <span class="font-pixel text-xs text-ink/40">BUSINESS</span>
+          <div class="mt-4 mb-6">
+            <span class="font-heading font-800 text-4xl">R$49</span>
+            <span class="font-body text-sm text-ink/50">/mês</span>
+          </div>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start gap-2 font-body text-sm text-ink/70">
+              <svg class="w-5 h-5 text-lime-500 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Tudo do Pro
+            </li>
+            <li class="flex items-start gap-2 font-body text-sm text-ink/70">
+              <svg class="w-5 h-5 text-lime-500 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Múltiplas páginas
+            </li>
+            <li class="flex items-start gap-2 font-body text-sm text-ink/70">
+              <svg class="w-5 h-5 text-lime-500 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              API & Webhooks
+            </li>
+            <li class="flex items-start gap-2 font-body text-sm text-ink/70">
+              <svg class="w-5 h-5 text-lime-500 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Team collaboration
+            </li>
+            <li class="flex items-start gap-2 font-body text-sm text-ink/70">
+              <svg class="w-5 h-5 text-lime-500 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Suporte prioritário
+            </li>
+            <li class="flex items-start gap-2 font-body text-sm text-ink/70">
+              <svg class="w-5 h-5 text-lime-500 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              White-label
+            </li>
+          </ul>
+          <a href="#" class="btn-outline w-full justify-center">Falar com vendas</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section id="faq" class="py-24 bg-ink text-paper px-4 sm:px-6 lg:px-8 relative">
+    <div class="scribble-star" style="top:50px;right:12%;transform:rotate(18deg);filter:hue-rotate(60deg);"></div>
+
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-16">
+        <span class="font-pixel text-xs text-volt tracking-wider">// FAQ</span>
+        <h2 class="font-heading font-800 text-3xl sm:text-4xl mt-4 tracking-tight">
+          Perguntas <span class="text-volt">frequentes</span>
+        </h2>
+      </div>
+
+      <div class="space-y-4">
+        <details class="faq-item border-2 border-paper/20 p-5 cursor-pointer hover:border-volt transition-colors duration-200">
+          <summary class="flex justify-between items-center font-heading font-700 text-base">
+            O que é o Pixelink?
+          </summary>
+          <p class="font-body text-sm text-paper/60 mt-3 leading-relaxed">
+            Pixelink é uma plataforma de link na bio com templates exclusivos em pixel art. Você cria uma página personalizada em minutos com seus links, loja, redes sociais e muito mais, tudo com visual retrô-moderno único.
+          </p>
+        </details>
+
+        <details class="faq-item border-2 border-paper/20 p-5 cursor-pointer hover:border-volt transition-colors duration-200">
+          <summary class="flex justify-between items-center font-heading font-700 text-base">
+            Preciso saber programar?
+          </summary>
+          <p class="font-body text-sm text-paper/60 mt-3 leading-relaxed">
+            Não! O Pixelink foi feito pra qualquer pessoa. Arraste e solte seus links, escolha um template, e pronto. Se quiser customizar com CSS, também pode.
+          </p>
+        </details>
+
+        <details class="faq-item border-2 border-paper/20 p-5 cursor-pointer hover:border-volt transition-colors duration-200">
+          <summary class="flex justify-between items-center font-heading font-700 text-base">
+            Posso usar meu próprio domínio?
+          </summary>
+          <p class="font-body text-sm text-paper/60 mt-3 leading-relaxed">
+            Sim! No plano Pro você conecta qualquer domínio personalizado. No plano Free, seu link fica como pixelink.bio/seuusuario.
+          </p>
+        </details>
+
+        <details class="faq-item border-2 border-paper/20 p-5 cursor-pointer hover:border-volt transition-colors duration-200">
+          <summary class="flex justify-between items-center font-heading font-700 text-base">
+            Como funciona a loja integrada?
+          </summary>
+          <p class="font-body text-sm text-paper/60 mt-3 leading-relaxed">
+            No plano Pro, você pode adicionar produtos digitais (ebooks, presets, cursos), receber pagamentos via Pix, Stripe ou PayPal, e acompanhar vendas no dashboard. Taxa de 0%.
+          </p>
+        </details>
+
+        <details class="faq-item border-2 border-paper/20 p-5 cursor-pointer hover:border-volt transition-colors duration-200">
+          <summary class="flex justify-between items-center font-heading font-700 text-base">
+            Qual a diferença pro Linktree?
+          </summary>
+          <p class="font-body text-sm text-paper/60 mt-3 leading-relaxed">
+            Design. Enquanto todo mundo tem a mesma bio genérica, no Pixelink cada página é uma obra de arte em pixel. Além disso, oferecemos loja sem taxas, domínio próprio no Pro, e QR codes pixelados.
+          </p>
+        </details>
+
+        <details class="faq-item border-2 border-paper/20 p-5 cursor-pointer hover:border-volt transition-colors duration-200">
+          <summary class="flex justify-between items-center font-heading font-700 text-base">
+            Posso cancelar a qualquer momento?
+          </summary>
+          <p class="font-body text-sm text-paper/60 mt-3 leading-relaxed">
+            Claro. Sem multa, sem burocracia. Se cancelar, sua página volta pro plano Free automaticamente.
+          </p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section class="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div class="scribble-star" style="top:30px;left:10%;transform:rotate(-12deg);"></div>
+    <div class="scribble-zigzag" style="bottom:40px;right:8%;transform:rotate(8deg);"></div>
+    <div class="scribble-star" style="bottom:60px;left:20%;transform:rotate(25deg);width:20px;height:20px;"></div>
+
+    <div class="max-w-3xl mx-auto text-center">
+      <span class="font-pixel text-xs text-grape tracking-wider">// BORA?</span>
+      <h2 class="font-heading font-800 text-3xl sm:text-4xl lg:text-5xl mt-4 tracking-tight leading-tight">
+        Sua bio merece mais<br/>que um link genérico
+      </h2>
+      <p class="font-body text-ink/60 mt-4 mb-8 max-w-md mx-auto">
+        Crie sua página pixel art agora. Grátis, sem cartão, sem compromisso. Leva 2 minutos.
+      </p>
+      <a href="#" class="btn-primary text-lg !py-4 !px-10">
+        Criar meu Pixelink agora
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M6 4L14 10L6 16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="bg-ink text-paper py-12 px-4 sm:px-6 lg:px-8 border-t-4 border-volt">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div>
+          <a href="#" class="flex items-center gap-2 mb-4">
+            <span class="font-pixel text-sm">&#9608;&#9608;</span>
+            <span class="font-heading font-800 text-xl">Pixelink</span>
+          </a>
+          <p class="font-body text-sm text-paper/50 leading-relaxed">O link na bio com estilo pixel art. Único, criativo, seu.</p>
+        </div>
+        <div>
+          <p class="font-heading font-700 text-sm mb-4">Produto</p>
+          <ul class="space-y-2">
+            <li><a href="#" class="font-body text-sm text-paper/50 hover:text-volt transition-colors duration-200">Templates</a></li>
+            <li><a href="#" class="font-body text-sm text-paper/50 hover:text-volt transition-colors duration-200">Preços</a></li>
+            <li><a href="#" class="font-body text-sm text-paper/50 hover:text-volt transition-colors duration-200">Analytics</a></li>
+            <li><a href="#" class="font-body text-sm text-paper/50 hover:text-volt transition-colors duration-200">Loja</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="font-heading font-700 text-sm mb-4">Recursos</p>
+          <ul class="space-y-2">
+            <li><a href="#" class="font-body text-sm text-paper/50 hover:text-volt transition-colors duration-200">Blog</a></li>
+            <li><a href="#" class="font-body text-sm text-paper/50 hover:text-volt transition-colors duration-200">Tutoriais</a></li>
+            <li><a href="#" class="font-body text-sm text-paper/50 hover:text-volt transition-colors duration-200">API Docs</a></li>
+            <li><a href="#" class="font-body text-sm text-paper/50 hover:text-volt transition-colors duration-200">Changelog</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="font-heading font-700 text-sm mb-4">Legal</p>
+          <ul class="space-y-2">
+            <li><a href="#" class="font-body text-sm text-paper/50 hover:text-volt transition-colors duration-200">Privacidade</a></li>
+            <li><a href="#" class="font-body text-sm text-paper/50 hover:text-volt transition-colors duration-200">Termos</a></li>
+            <li><a href="#" class="font-body text-sm text-paper/50 hover:text-volt transition-colors duration-200">Cookies</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-paper/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="font-body text-xs text-paper/30">&copy; 2026 Pixelink. Todos os direitos reservados.</p>
+        <div class="flex items-center gap-4">
+          <a href="#" class="text-paper/40 hover:text-volt transition-colors duration-200" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+          <a href="#" class="text-paper/40 hover:text-volt transition-colors duration-200" aria-label="Twitter">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="#" class="text-paper/40 hover:text-volt transition-colors duration-200" aria-label="TikTok">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.48V13a8.28 8.28 0 005.58 2.15V11.7a4.83 4.83 0 01-3.77-1.78V6.69z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ PHONE CAROUSEL JS ============ -->
+  <script>
+    (function () {
+      const slides = document.querySelectorAll('.tribe-slide');
+      let current = 0;
+      setInterval(() => {
+        slides[current].classList.remove('active');
+        current = (current + 1) % slides.length;
+        slides[current].classList.add('active');
+      }, 3000);
+    })();
+  </script>
+
+  <a href="../index.html" style="position:fixed;right:16px;bottom:16px;z-index:99;display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.1rem;border:3px solid #11111b;border-radius:999px;background:#d9ff48;color:#11111b;font:700 .85rem/1 Manrope,system-ui,sans-serif;text-decoration:none;box-shadow:3px 3px 0 #11111b;">v2 atual &rarr;</a>
+</body>
+</html>
