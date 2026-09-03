@@ -78,7 +78,7 @@ Cota: requests + Assets. Volume de `www` é irrelevante ao lado de `sites`.
 
 ### Worker app
 
-API + dashboard. Único host com cookie (`Domain=app.seudominio.com`). Aqui: magic link, onboard, Stripe webhook, enqueue do publish, teto de links do free.
+API + dashboard. Único host com cookie (`Domain=app.linkk.ae`). Aqui: magic link, onboard, Stripe webhook, enqueue do publish, teto de links do free.
 
 Não serve a bio pública. Não mistura com `sites`.
 

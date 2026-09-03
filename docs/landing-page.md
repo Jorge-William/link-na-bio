@@ -6,6 +6,8 @@
 
 A landing page demonstra o produto "link na bio" com identidade visual em **pixel art** e **cores modernas**. Ela vive em `apps/www/public/` e é servida pelo Cloudflare Worker definido em `apps/www/`.
 
+**Domínio da plataforma:** `linkk.ae` — marketing em `www.linkk.ae`, app em `app.linkk.ae`, bios free em `{slug}.sites.linkk.ae`.
+
 Existem **duas versões** preservadas para comparação:
 
 | Versão | Arquivo | Descrição |

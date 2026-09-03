@@ -116,7 +116,7 @@ function renderBioHtml(model: PageModel, showSeal: boolean): string {
     .join("\n");
 
   const seal = showSeal
-    ? `<footer><a href="https://www.example.com">Feito com link-na-bio</a></footer>`
+    ? `<footer><a href="https://www.linkk.ae">Feito com linkk.ae</a></footer>`
     : "";
 
   return `<!DOCTYPE html>

@@ -23,7 +23,7 @@ queue = "linknabio-publish-prod"
 
 [vars]
 SERVICE_NAME = "app"
-SITES_ZONE = "sites.example.com"
-PLATFORM_ZONE = "example.com"
+SITES_ZONE = "sites.linkk.ae"
+PLATFORM_ZONE = "linkk.ae"
 # Preencher via `wrangler secret put` em prod:
 # SESSION_SECRET, PSP_WEBHOOK_SECRET, RESEND_API_KEY

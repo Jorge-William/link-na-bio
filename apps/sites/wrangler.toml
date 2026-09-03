@@ -18,5 +18,5 @@ bucket_name = "linknabio-sites-prod"
 
 [vars]
 SERVICE_NAME = "sites"
-SITES_ZONE = "sites.example.com"
-PLATFORM_ZONE = "example.com"
+SITES_ZONE = "sites.linkk.ae"
+PLATFORM_ZONE = "linkk.ae"

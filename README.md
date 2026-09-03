@@ -1,6 +1,6 @@
 # link-na-bio
 
-SaaS de **perfil e site profissional** (bio + institucional): editor, publicação na edge, **assinatura recorrente**. Infra fixa: **Cloudflare**. Stack do app: **flexível**.
+SaaS de **perfil e site profissional** (bio + institucional): editor, publicação na edge, **assinatura recorrente**. Domínio da plataforma: **[linkk.ae](https://linkk.ae)**. Infra fixa: **Cloudflare**. Stack do app: **flexível**.
 
 ## Status
 

@@ -38,7 +38,7 @@ sequenceDiagram
   App->>Mail: magic link (login no app)
   Note over App,D1: Sem webhook = sem conta. Aba fechada não cria órfão.
   C->>Mail: abre link
-  Mail->>App: cookie só em app.seudominio.com
+  Mail->>App: cookie só em app.linkk.ae
   App->>App: onboard 4 telas → Publicar
 ```
 

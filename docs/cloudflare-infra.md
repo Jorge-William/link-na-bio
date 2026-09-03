@@ -6,16 +6,16 @@ Uma zona, três hosts, um bucket por tenant publicado. Tenant = registro no banc
 
 | Superfície | Host | Papel |
 |---|---|---|
-| Marketing | `www.seudominio.com` | Landing, pricing. Sem sessão. |
-| App | `app.seudominio.com` | Dashboard, API, cobrança. Cookie só aqui. |
-| Sites | `{slug}.sites.seudominio.com` | Página pública. Sem sessão. |
+| Marketing | `www.linkk.ae` | Landing, pricing. Sem sessão. |
+| App | `app.linkk.ae` | Dashboard, API, cobrança. Cookie só aqui. |
+| Sites | `{slug}.sites.linkk.ae` | Página pública. Sem sessão. |
 | Domínio pago | `bio.cliente.com` | Custom Hostname → mesmo Worker `sites`. |
 
 Render pesado (SSG, templates, snapshot) roda **fora do request** — Queue + Worker ou Container. Botão Publicar responde 202.
 
 ```mermaid
 flowchart TB
-  subgraph dns["zona seudominio.com"]
+  subgraph dns["zona linkk.ae"]
     WWW["www"]
     APP["app"]
     SITES["*.sites"]
@@ -46,7 +46,7 @@ app     CNAME  app-worker
 sites   CNAME  sites-worker     ; fallback origin dummy A 192.0.2.0 se o origin for o Worker
 ```
 
-Cookie `Domain=app.seudominio.com`. Nunca `.sites.seudominio.com`, nunca o apex.
+Cookie `Domain=app.linkk.ae`. Nunca `.sites.linkk.ae`, nunca o apex.
 
 ## Request: sites
 
@@ -93,7 +93,7 @@ Tema = uma imagem pinada (`hugo:extended` + repo de temas). Não clone por clien
 ## Custom domain (pago, v2)
 
 1. App cria Custom Hostname na API Cloudflare for SaaS.
-2. Cliente aponta `bio.estudio.com` CNAME → `sites.seudominio.com`.
+2. Cliente aponta `bio.estudio.com` CNAME → `sites.linkk.ae`.
 3. Certificado automático. Worker `sites` é o fallback origin (`*/*`).
 4. Linha em `custom_domains.hostname` + KV.
 
@@ -101,7 +101,7 @@ Apex (`@`) fica depois. MVP aceita `bio.` ou `www`.
 
 ```mermaid
 flowchart LR
-  Cliente["bio.estudio.com"] -->|CNAME| Sites["sites.seudominio.com"]
+  Cliente["bio.estudio.com"] -->|CNAME| Sites["sites.linkk.ae"]
   Sites --> CF["SaaS cert"]
   CF --> W["Worker sites /*"]
   W --> R2["mesmo current/"]

@@ -23,24 +23,24 @@ describe("plans", () => {
 });
 
 describe("parseHost", () => {
-  const sites = "sites.example.com";
+  const sites = "sites.linkk.ae";
 
   it("extracts slug from *.sites", () => {
-    expect(parseHost("maria.sites.example.com", sites)).toEqual({
+    expect(parseHost("maria.sites.linkk.ae", sites)).toEqual({
       kind: "platform_slug",
       slug: "maria",
     });
   });
 
   it("treats vanity host as custom", () => {
-    expect(parseHost("bio.estudio.com", sites, "example.com")).toEqual({
+    expect(parseHost("bio.estudio.com", sites, "linkk.ae")).toEqual({
       kind: "custom",
       hostname: "bio.estudio.com",
     });
   });
 
   it("rejects www/app of platform zone", () => {
-    expect(parseHost("www.example.com", sites, "example.com").kind).toBe(
+    expect(parseHost("www.linkk.ae", sites, "linkk.ae").kind).toBe(
       "unknown",
     );
   });

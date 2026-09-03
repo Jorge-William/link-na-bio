@@ -34,8 +34,8 @@ export function isValidSlug(slug: string): boolean {
 
 /**
  * @param host Header Host sem porta
- * @param sitesZone Ex.: "sites.seudominio.com"
- * @param platformZone Ex.: "seudominio.com" — hosts www/app caem em unknown aqui
+ * @param sitesZone Ex.: "sites.linkk.ae"
+ * @param platformZone Ex.: "linkk.ae" — hosts www/app caem em unknown aqui
  */
 export function parseHost(
   host: string,
